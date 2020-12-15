@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Daniel Cardoso - Carrazeda de Aniães</title>
+        <meta charset= "utf-8">
+        <link rel="stylesheet" type="text/css" href="websig.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    </head>
+
+    <body>
+        <header>
+            <ul>
+                <li><a href="index.html">Página Inicial</a></li>
+                <li><a href="academico.html">Percurso Académico</a></li>
+                <li><a href="profissional.html">Experiência Profissional</a></li>
+                <li><a href="websig.html">Movimentos de Vertente em Carrazeda de Ansiães</a></li>
+                <li><a href="contactos.html">Contactos</a></li>
+            </ul>
+        </header>
+        
+        <h1> Enquadramento do munícipio e dos Movimentos de Vertente registados</h1>
+        <div id="map" style="width: auto; height: 600px">i</div>
+
+        <!-- Add the Leaflet JavaScript library -->
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="GeoJSON/mv.geojson"></script>
+        <script src="GeoJSON/carrazeda.geojson"> </script>
+        <script src="GeoJSON/ve.geojson"></script>
+        <script src="GeoJSON/mde.geojson"></script>
+        
+
+        <script>
+            // Create variable to hold map element, give initial settings to map
+            var map = L.map('map',{ center: [41.2443869568676, -7.307860291439048], zoom: 11});
+    
+            // Add OpenStreetMap tile layer to map element
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+            // Movimentos de Vertente
+            var mov = L.geoJSON( movimv ,{
+                onEachFeature: function(feature,layer){
+                let data = feature.properties.indatei;
+                let coord = feature.geometry.coordinates;
+                layer.bindPopup('<h1>Data: </h1>' + data + '<br><h2>Local: </h2> (' + coord + ')');
+            }}).addTo(map);
+
+            // Carrazeda de Ansiães
+            var carrazeda = L.geoJSON( concelho ,{
+                onEachFeature: function(feature,layer){
+                let concelho = feature.properties.Concelho;
+                let freguesia = feature.properties.Freguesia;
+                let coord = feature.geometry.coordinates;
+                layer.bindPopup('<h1> Concelho: </h1>' + concelho + '<h1>Freguesia: </h1>' + freguesia);
+            }}).addTo(map);
+
+            // Escala
+            var scale = L.control.scale();
+            scale.addTo(map);
+        </script>
+
+        <h1> Modelo Digital de Elevação</h1>
+        <div id="map2" style="width: auto; height: 600px">e</div>
+
+        <script>
+            // Create variable to hold map element, give initial settings to map
+            var map2 = L.map('map2',{ center: [41.2443869568676, -7.307860291439048], zoom: 11});
+    
+            // Add OpenStreetMap tile layer to map element
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map2);
+            
+            // MDE
+            function getAreaColor2(feature){
+            console.log(feature)
+	        switch (feature.properties.gridcode){
+  	        case 1 : return '#01665e' ;
+            case 2 : return '#35978f' ;
+            case 3 : return '#80cdc1' ;
+            case 4 : return '#c7eae5' ;
+            case 5 : return '#f6e8c3' ;
+            case 6 : return '#dfc27d' ;
+            case 7 : return '#bf812d' ;
+            case 8 : return '#8c510a' ;
+            }};
+
+            function areaStyle2(feature){
+            return {
+            fillColor: getAreaColor2(feature),
+            weight: 2,
+            opacity: 1,
+            color: "none",
+            fillOpacity: 1
+            }};
+
+            var mde = L.geoJSON( mde ,{ style: areaStyle2 }
+            ).addTo(map2);
+
+            // Escala2
+            var scale2 = L.control.scale();
+            scale2.addTo(map2);
+
+            // Legenda
+            var legenda = L.control({ position: "bottomleft" });
+            legenda.onAdd = function(map) {
+                var div = L.DomUtil.create("div", "legenda");
+                    div.innerHTML += "<h4>Elevação (metros)</h4>";
+                    div.innerHTML += '<i style="background: #8c510a"></i><span> 850 - 800 </span><br>';
+                    div.innerHTML += '<i style="background: #bf812d"></i><span> 800 - 700  </span><br>';
+                    div.innerHTML += '<i style="background: #dfc27d"></i><span> 700 - 600 </span><br>';
+                    div.innerHTML += '<i style="background: #f6e8c3"></i><span> 600 - 500 </span><br>';
+                    div.innerHTML += '<i style="background: #c7eae5"></i><span> 500 - 400 </span><br>';
+                    div.innerHTML += '<i style="background: #80cdc1"></i><span> 400 - 300 </span><br>';
+                    div.innerHTML += '<i style="background: #35978f"></i><span> 300 - 200 </span><br>';
+                    div.innerHTML += '<i style="background: #01665e"></i><span> 200 - 100 </span><br>';
+                    return div;
+                    };
+            legenda.addTo(map2);
+            
+        </script>
+
+        <h1> Vulnerabilidade Estrutural</h1>
+        <div id="map3" style="width: auto; height: 600px">t</div>
+
+        <script>
+        // Create variable to hold map element, give initial settings to map
+        var map3 = L.map('map3',{ center: [41.2443869568676, -7.307860291439048], zoom: 11});
+        
+        // Add OpenStreetMap tile layer to map element
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map3);
+
+        // Vulnerabilidade Estrutural
+
+        function getAreaColor(feature){
+            console.log(feature)
+	        switch (feature.properties.gridcode){
+  	        case 1 : return 'green' ;
+            case 2 : return 'yellow' ;
+            case 3 : return 'orange' ;
+            case 4 : return 'red' ;
+            }};
+
+            function areaStyle(feature){
+            return {
+            fillColor: getAreaColor(feature),
+            weight: 2,
+            opacity: 1,
+            color: "black",
+            fillOpacity: 1
+            }};
+
+            var vulnerabilidade = L.geoJSON( ve ,{style: areaStyle }
+            ).addTo(map3);
+
+            // Escala3
+            var scale3 = L.control.scale();
+            scale3.addTo(map3);
+
+            // Legenda2
+            var legenda2 = L.control({ position: "bottomleft" });
+            legenda2.onAdd = function(map) {
+                var div = L.DomUtil.create("div", "legenda2");
+            div.innerHTML += "<h4>Nível de Vulnerabilidade Estrutural</h4>";
+            div.innerHTML += '<i style="background: red"></i><span> Muito Elevado</span><br>';
+            div.innerHTML += '<i style="background: orange"></i><span> Elevado </span><br>';
+            div.innerHTML += '<i style="background: yellow"></i><span> Moderado </span><br>';
+            div.innerHTML += '<i style="background: green"></i><span> Baixo </span><br>';
+            return div;
+            };
+            legenda2.addTo(map3);
+
+        </script>
+        <footer>
+            <p>Daniel Cardoso</p>
+        </footer>       
+    </body>
+</html>
